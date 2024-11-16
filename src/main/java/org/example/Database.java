@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class Database {
 
-    private static String url = "jdbc:mysql://localhost:3306/test";
+    private static String url = "jdbc:mysql://localhost:3306/fleet_db";
     private static String user = "root";
-    private static String password = "password";
+    private static String password = "nick..";
 
     private Database() {
     }
