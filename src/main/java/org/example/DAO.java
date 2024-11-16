@@ -1,18 +1,18 @@
-package org.example;
-import java.sql.SQLException;
+package com.jdbc.demo;
+
 import java.util.List;
 
-public interface DAO<T> {
+public interface VehiclesDao {
 
-    T get(int id) throws SQLException;
+    //CRUD --> create, read, update, delete
 
-    List<T> getAll() throws SQLException;
+    void addVehicle(Vehicles vehicles);
 
-    int save(T t) throws SQLException;
+    Vehicles getVehiclesById(int vehicle_id);
 
-    int insert(T t) throws SQLException;
+    List<Vehicles> getAllVehicles();
 
-    int update(T t) throws SQLException;
+    void updateVehicles(Vehicles vehicles);
 
-    int delete(T t) throws SQLException;
+    void deleteVehicles(int id);
 }
