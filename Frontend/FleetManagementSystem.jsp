@@ -1,50 +1,39 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
 <%
     String action = request.getParameter("action");
     String username = request.getParameter("username");
     String password = request.getParameter("password");
     String error = null;
-    
+
+    // Predefined list of valid usernames and passwords
+    String[][] validUsers = {
+        {"admin1", "password1"}, {"admin2", "password2"}, {"admin3", "password3"},
+        {"admin4", "password4"}, {"admin5", "password5"}, {"admin6", "password6"},
+        {"admin7", "password7"}, {"admin8", "password8"}, {"admin9", "password9"},
+        {"admin10", "password10"}, {"user1", "userpass1"}, {"user2", "userpass2"},
+        {"user3", "userpass3"}, {"user4", "userpass4"}, {"user5", "userpass5"},
+        {"user6", "userpass6"}, {"user7", "userpass7"}, {"user8", "userpass8"},
+        {"user9", "userpass9"}, {"user10", "userpass10"}
+    };
+
     // Handle login process
     if ("login".equals(action)) {
-        // Database connection details
-        String dbURL = "Mysql@localhost:3306";
-        String dbUser = "root";
-        String dbPassword = "Mayank2004";
+        boolean isValid = false;
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-
-            String query = "SELECT * FROM users WHERE username = ? AND password = ?";
-            ps = conn.prepareStatement(query);
-            ps.setString(1, username);
-            ps.setString(2, password);
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                // Successful login
-                session.setAttribute("username", username);
-                response.sendRedirect("fms.jsp?action=dashboard");
-            } else {
-                // Login failed
-                error = "Invalid username or password!";
+        for (String[] user : validUsers) {
+            if (user[0].equals(username) && user[1].equals(password)) {
+                isValid = true;
+                break;
             }
-        } catch (Exception e) {
-            error = "An error occurred: " + e.getMessage();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (conn != null) conn.close();
-            } catch (SQLException ex) {
-                error = "Error closing resources: " + ex.getMessage();
-            }
+        }
+
+        if (isValid) {
+            // Successful login
+            session.setAttribute("username", username);
+            response.sendRedirect("fms.jsp?action=dashboard");
+        } else {
+            // Login failed
+            error = "Invalid username or password!";
         }
     }
 
@@ -77,6 +66,9 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .spinner-border {
+            display: none;
         }
     </style>
 </head>
@@ -122,7 +114,7 @@
     <!-- Login Section -->
     <div class="card p-4" style="max-width: 400px; margin: auto;">
         <h2 class="text-center mb-4">Fleet Management Login</h2>
-        <form method="post" action="?action=login">
+        <form id="loginForm" method="post" action="?action=login">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" required>
@@ -138,7 +130,26 @@
                 <%= error %>
             </div>
         <% } %>
+        <div class="spinner-border text-light spinner" id="loadingSpinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const spinner = document.getElementById("loadingSpinner");
+
+            if (!username || !password) {
+                event.preventDefault();
+                alert("Both fields are required!");
+                return;
+            }
+
+            // Show spinner
+            spinner.style.display = "block";
+        });
+    </script>
 <%
     }
 %>
